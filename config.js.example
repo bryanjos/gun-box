@@ -1,0 +1,10 @@
+exports.config = {
+  appKey:'YOUR_SECRET_KEY_HERE',
+  port: 3000,
+  roles: ['admin', 'user'],
+  rethinkdb: {
+    db: 'gun_box',
+    host: 'localhost',
+    port: '28015'
+  }
+};
