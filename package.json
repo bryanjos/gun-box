@@ -8,6 +8,20 @@
   "dependencies": {
     "express": "3.4.7",
     "ejs": "*",
-    "less-middleware": "*"
+    "less-middleware": "*",
+    "rethinkdb": "~1.11.0-1",
+    "passport": "~0.1.17",
+    "passport-local": "~0.1.6",
+    "bcrypt": "~0.7.7",
+    "underscore": "~1.5.2",
+    "validator": "~2.0.0"
+  },
+  "devDependencies": {
+    "should": "~2.1.1",
+    "supertest": "~0.8.2",
+    "grunt": "~0.4.2",
+    "grunt-contrib-jshint": "~0.7.2",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-mocha-test": "~0.8.1"
   }
 }

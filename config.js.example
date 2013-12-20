@@ -1,0 +1,32 @@
+var configuration = {
+  production: {
+      appKey:'YOUR_SECRET_KEY_HERE',
+      port: 3000,
+      rethinkdb: {
+        db: 'gun_box',
+        host: 'localhost',
+        port: '28015'
+      }
+  },
+  development: {
+      appKey:'YOUR_SECRET_KEY_HERE',
+      port: 3000,
+      rethinkdb: {
+        db: 'gun_box',
+        host: 'localhost',
+        port: '28015'
+      }
+  },
+  test: {
+      appKey:'YOUR_SECRET_KEY_HERE',
+      port: 3000,
+      rethinkdb: {
+        db: 'gun_box',
+        host: 'localhost',
+        port: '28015'
+      }
+  }
+};
+
+exports.roles =  ['admin', 'user'];
+exports.config = configuration[process.env.NODE_ENV];
