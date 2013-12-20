@@ -1,13 +1,22 @@
+var users = require('../models/users.js');
 
-
-exports.index = function(req, res){
-  res.render('index', { title: 'Express' });
+exports.init = function(req, res){
+  users.InitializeAdmin(req.body, function(err, result){
+     if(err){
+       res.send(500, err);
+     }else{
+       res.send(200, 'Account "admin" created successfully');
+     }
+  });
 };
 
-exports.signUp = function(req, res){
-  res.render('index', { title: 'Express' });
-};
 
-exports.signUpPost = function(req, res){
-  res.render('index', { title: 'Express' });
+exports.createDomainUser = function(req, res){
+  users.CreateDomainUser(req.body, function(err, result){
+    if(err){
+      res.send(500, err);
+    }else{
+      res.send(200, result);
+    }
+  });
 };

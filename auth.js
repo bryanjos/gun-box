@@ -1,16 +1,16 @@
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var underscore = require('underscore')._;
-var Users = require('./domain/users.js').Users;
-var db = require('./domain/db.js');
+var bcrypt = require('bcrypt');
+var DB = require('./models/DB.js').DB;
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
-    db.connect(function(err, connection){
+    DB.connect(function(err, connection){
       if(err){
         return done(null, false, { message: 'Unable to connect to database.' });
       }else{
-        Users.authenticate(connection, username, password, function(err, user){
+        this.authenticate(connection, username, password, function(err, user){
           if (err) { return done(err); }
           if (!user) {
             return done(null, false, { message: 'Incorrect username or password.' });
@@ -28,11 +28,11 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-  db.connect(function(err, connection){
+  DB.connect(function(err, connection){
     if(err){
        done(err, null);
     }else{
-      Users.find(connection, id, function(err, user) {
+      DB.get(connection, DB.tables.USERS, id, function(err, user) {
         done(err, user);
       });
     }
@@ -41,13 +41,30 @@ passport.deserializeUser(function(id, done) {
 
 
 exports.authorize = function(role) {
-  return [
-    passport.authenticate('local'),
-    function(req, res, next) {
-      if (req.user && underscore.contains(req.user.roles, role))
-        next();
-      else
-        res.send(401, 'Unauthorized');
+  return function(req, res, next) {
+    if (req.isAuthenticated() && req.user && req.user.roles.indexOf(role) > -1){
+      next();
+    }else{
+      res.send(401, 'Unauthorized');
     }
-  ];
+  };
+};
+
+
+authenticate = function(conn, username, password, callback){
+  DB.get(conn, DB.tables.USERS, username, function(err, user){
+    if(err){
+      callback(err, null);
+    }else{
+      bcrypt.compare(password, user.password, function(err, res) {
+        if(err){
+          callback(err, null)
+        } else if(res == false){
+          callback(new Error('Invalid username or password'), null)
+        }else{
+          callback(err, user);
+        }
+      });
+    }
+  });
 };
