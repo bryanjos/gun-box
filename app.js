@@ -10,6 +10,7 @@ var admin = require('./routes/admin');
 var domain = require('./routes/domain');
 var user = require('./routes/user');
 var authentication = require('./routes/authentication');
+var DB = require('./models/DB').DB;
 var config = require('./config.js').config;
 var http = require('http');
 var path = require('path');
@@ -61,8 +62,13 @@ app.post(apiAuthentication + '/in', passport.authenticate('local'), authenticati
 app.post(apiAuthentication + '/out', auth.authorize('user'), authentication.signOut);
 
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+DB.init(function(err, res){
+  if(err){
+    console.log(err.message);
+  }
+  http.createServer(app).listen(app.get('port'), function(){
+    console.log('Express server listening on port ' + app.get('port'));
+  });
 });
 
 exports.app = app;

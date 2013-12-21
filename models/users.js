@@ -1,5 +1,6 @@
 var check = require('validator').check;
 var DB = require('../models/DB.js').DB;
+var domains = require('../models/domains.js');
 var config = require('../config.js').config;
 var roles = require('../config.js').roles;
 var bcrypt = require('bcrypt');
@@ -57,7 +58,7 @@ exports.create = function(user, callback){
     check(user.id, 'id must be of the form "<username>@<domain>"').contains('@');
     var domain = user.id.substr(user.id.indexOf('@') + 1);
     DB.connect(function(err, connection){
-      DB.get(connection, DB.tables.DOMAINS, domain, function(err, domain){
+      domains.get(domain, function(err, domain){
         if(domain == null){
           var error = new Error();
           error.message = 'Domain does not exist';
@@ -94,6 +95,15 @@ exports.create = function(user, callback){
   }
 };
 
+exports.get = function(id, cb){
+  DB.connect(function(err, connection){
+    if(err){
+      cb(err, null);
+    }else{
+      DB.get(connection, DB.tables.USERS, id, cb);
+    }
+  });
+};
 
 exports.list = function(cb){
   DB.connect(function(err, connection){

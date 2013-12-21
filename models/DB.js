@@ -13,20 +13,13 @@ exports.DB = {
       if (err) {
         callback(err, null);
       } else {
-        r.dbCreate(config.rethinkdb.db)
-          .run(connection, function (err, results) {
-            if (err) {
-              callback(err, null);
-            } else {
-              r.tableCreate(exports.DB.tables.USERS).run(connection, function (err, results) {
-                if (err) {
-                  callback(err, null);
-                } else {
-                  r.tableCreate(exports.DB.tables.DOMAINS).run(connection, callback);
-                }
-              });
-            }
+        r.dbCreate(config.rethinkdb.db).run(connection, function (err, results) {
+          r.tableCreate(exports.DB.tables.USERS).run(connection, function (err, results) {
+            r.tableCreate(exports.DB.tables.DOMAINS).run(connection, function(err, results){
+              callback(null, {created: 1});
+            });
           });
+        });
       }
     });
   },
@@ -36,20 +29,13 @@ exports.DB = {
       if (err) {
         callback(err, null);
       } else {
-        r.tableDrop(exports.DB.tables.USERS)
-          .run(connection, function (err, results) {
-            if (err) {
-              callback(err, null);
-            } else {
-              r.tableDrop(exports.DB.tables.DOMAINS).run(connection, function (err, results) {
-                if (err) {
-                  callback(err, null);
-                } else {
-                  r.dbDrop(config.rethinkdb.db).run(connection, callback);
-                }
-              });
-            }
+        r.tableDrop(exports.DB.tables.USERS).run(connection, function (err, results) {
+          r.tableDrop(exports.DB.tables.DOMAINS).run(connection, function (err, results) {
+            r.dbDrop(config.rethinkdb.db).run(connection, function(err, results){
+              callback(null, {dropped: 1});
+            });
           });
+        });
       }
     });
   },
