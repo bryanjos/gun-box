@@ -3,6 +3,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var underscore = require('underscore')._;
 var bcrypt = require('bcrypt');
 var DB = require('./models/DB.js').DB;
+var users = require('./models/users.js');
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
@@ -32,7 +33,7 @@ passport.deserializeUser(function(id, done) {
     if(err){
        done(err, null);
     }else{
-      DB.get(connection, DB.tables.USERS, id, function(err, user) {
+      users.get(id, function(err, user) {
         done(err, user);
       });
     }
@@ -52,7 +53,7 @@ exports.authorize = function(role) {
 
 
 authenticate = function(conn, username, password, callback){
-  DB.get(conn, DB.tables.USERS, username, function(err, user){
+  users.get(username, function(err, user){
     if(err){
       callback(err, null);
     }else{

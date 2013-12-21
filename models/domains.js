@@ -2,6 +2,16 @@ var check = require('validator').check;
 var DB = require('../models/DB.js').DB;
 
 
+exports.get = function(id, cb){
+  DB.connect(function(err, connection){
+    if(err){
+      cb(err, null);
+    }else{
+      DB.get(connection, DB.tables.DOMAINS, id, cb);
+    }
+  });
+};
+
 exports.list = function(cb){
   DB.connect(function(err, connection){
     if(err){

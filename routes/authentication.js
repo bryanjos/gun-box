@@ -1,5 +1,6 @@
 exports.signIn = function(req, res){
-  res.send(200);
+  delete req.user.password;
+  res.send(200, req.user);
 };
 
 exports.signOut = function(req, res){

@@ -66,8 +66,13 @@ var apiMailGun = api + '/mailgun';
 app.post(apiMailGun + '/inbox', mailgun.inbox);
 
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+DB.init(function(err, res){
+  if(err){
+    console.log(err.message);
+  }
+  http.createServer(app).listen(app.get('port'), function(){
+    console.log('Express server listening on port ' + app.get('port'));
+  });
 });
 
 exports.app = app;
