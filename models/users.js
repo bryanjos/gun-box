@@ -7,7 +7,7 @@ var saltLength = 8;
 var passwordLength = 8;
 
 
-exports.InitializeAdmin = function(admin, callback){
+exports.createAdmin = function(admin, callback){
   var adminUsername = 'admin';
   try{
     check(admin.password, 'password is required').notNull().notEmpty();
@@ -51,7 +51,7 @@ function generateRandomPassword(length){
 }
 
 
-exports.CreateDomainUser = function(user, callback){
+exports.create = function(user, callback){
   try{
     check(user.id, 'id is required').notNull().notEmpty();
     check(user.id, 'id must be of the form "<username>@<domain>"').contains('@');
@@ -92,4 +92,49 @@ exports.CreateDomainUser = function(user, callback){
   }catch (err){
     callback(err, null);
   }
+};
+
+
+exports.list = function(cb){
+  DB.connect(function(err, connection){
+    if(err){
+      cb(err, null);
+    }else{
+      DB.listWithFields(connection, DB.tables.USERS, 'id', cb);
+    }
+  });
+};
+
+
+exports.update = function(id, user, cb){
+
+  try{
+    check(user.password, 'password is required.').notNull().notEmpty();
+
+    DB.connect(function(err, connection){
+      if(err){
+        cb(err, null);
+      }else{
+        bcrypt.hash(user.password, saltLength, function(err, hash) {
+          if(err){
+            cb(err, null);
+          }else{
+            DB.update(connection, DB.tables.USERS, id, {password: hash}, cb);
+          }
+        });
+      }
+    });
+  }catch(err){
+    cb(err, null);
+  }
+};
+
+exports.delete = function(id, cb){
+  DB.connect(function(err, connection){
+    if(err){
+      cb(err, null);
+    }else{
+      DB.delete(connection, DB.tables.USERS, id, cb);
+    }
+  });
 };
