@@ -8,6 +8,7 @@ var passport = require('passport');
 var auth = require('./auth.js');
 var admin = require('./routes/admin');
 var domain = require('./routes/domain');
+var user = require('./routes/user');
 var authentication = require('./routes/authentication');
 var config = require('./config.js').config;
 var http = require('http');
@@ -42,13 +43,18 @@ var api = '/api/v1';
 
 var apiAdmin = api + '/admin';
 app.post(apiAdmin + '/init', admin.init);
-app.post(apiAdmin + '/user', auth.authorize('admin'), admin.createDomainUser);
 
 var apiDomains = api + '/domains';
 app.get(apiDomains, auth.authorize('admin'), domain.list);
 app.post(apiDomains, auth.authorize('admin'), domain.create);
-app.put(apiDomains + '/:key', auth.authorize('admin'), domain.update);
-app.delete(apiDomains + '/:key', auth.authorize('admin'), domain.delete);
+app.put(apiDomains + '/:id', auth.authorize('admin'), domain.update);
+app.delete(apiDomains + '/:id', auth.authorize('admin'), domain.delete);
+
+var apiUsers = api + '/users';
+app.get(apiUsers, auth.authorize('user'), user.list);
+app.post(apiUsers, auth.authorize('admin'), user.create);
+app.put(apiUsers, auth.authorize('user'), user.update);
+app.delete(apiUsers + '/:id', auth.authorize('admin'), user.delete);
 
 var apiAuthentication = api + '/sign';
 app.post(apiAuthentication + '/in', passport.authenticate('local'), authentication.signIn);

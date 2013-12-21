@@ -72,6 +72,16 @@ exports.DB = {
     });
   },
 
+  listWithFields: function (conn, tableName, fields, callback) {
+    r.table(tableName).withFields(fields).run(conn, function(err, cursor){
+      if(err){
+        callback(err, null);
+      }else{
+        cursor.toArray(callback);
+      }
+    });
+  },
+
   filter: function (conn, tableName, query, callback) {
     r.table(tableName).filter(query).run(conn, function(err, cursor){
       if(err){

@@ -1,7 +1,7 @@
-var domains = require('../models/domains.js');
+var users = require('../models/users.js');
 
 exports.list = function(req, res){
-  domains.list(function(err, result){
+  users.list(function(err, result){
     if(err){
       res.send(500, err);
     }else{
@@ -11,17 +11,17 @@ exports.list = function(req, res){
 };
 
 exports.create = function(req, res){
-  domains.create(req.body, function(err, result){
+  users.create(req.body, function(err, result){
     if(err){
       res.send(500, err);
     }else{
-      res.send(200);
+      res.send(200, result);
     }
   });
 };
 
 exports.update = function(req, res){
-  domains.update(req.params.id, req.body, function(err, result){
+  users.update(req.user.id, req.body, function(err, result){
     if(err){
       res.send(500, err);
     }else{
@@ -31,7 +31,7 @@ exports.update = function(req, res){
 };
 
 exports.delete = function(req, res){
-  domains.delete(req.params.id, function(err, result){
+  users.delete(req.params.id, function(err, result){
     if(err){
       res.send(500, err);
     }else{

@@ -41,48 +41,8 @@ describe('Admin', function () {
     });
   });
 
-  it('should return 200 when admin creates domain', function (done) {
-    api(app).post('/api/v1/domains')
-      .set('cookie', cookie)
-      .send({id: 'domain.com', type: 'mailgun', publicKey: 'public', secretKey: 'secret'})
-      .expect(200, done);
-  });
-
-  it('should return 500 adding user without id', function (done) {
-    api(app).post('/api/v1/admin/user').set('cookie', cookie).send({id: ''}).expect(500, function(err, res){
-      res.body.message.should.equal( 'id is required');
-      done();
-    });
-  });
-
-  it('should return 500 adding user with id that is not valid', function (done) {
-    api(app).post('/api/v1/admin/user').set('cookie', cookie).send({id: 'mojo'}).expect(500, function(err, res){
-      res.body.message.should.equal('id must be of the form "<username>@<domain>"');
-      done();
-    });
-  });
-
-  it('should return 500 adding user with id contains invalid domain', function (done) {
-    api(app).post('/api/v1/admin/user').set('cookie', cookie).send({id: 'mojo@mojo.com'}).expect(500, function(err, res){
-      res.body.message.should.equal('Domain does not exist');
-      done();
-    });
-  });
-
-  it('should return 200 adding user with valid id', function (done) {
-    api(app).post('/api/v1/admin/user').set('cookie', cookie).send({id: 'mojo@domain.com'}).expect(200, function(err, res){
-      password = res.body.password;
-      done();
-    });
-  });
-
   it('should return 200 when sign admin out', function (done) {
     api(app).post('/api/v1/sign/out').set('cookie', cookie).expect(200, done);
-  });
-
-
-  it('should authenticate created user', function (done) {
-    api(app).post('/api/v1/sign/in').send({username: 'mojo@domain.com', password: password}).expect(200, done);
   });
 
 });
