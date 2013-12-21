@@ -10,6 +10,7 @@ var admin = require('./routes/admin');
 var domain = require('./routes/domain');
 var user = require('./routes/user');
 var authentication = require('./routes/authentication');
+var mailgun = require('./routes/mailgun');
 var config = require('./config.js').config;
 var http = require('http');
 var path = require('path');
@@ -59,6 +60,10 @@ app.delete(apiUsers + '/:id', auth.authorize('admin'), user.delete);
 var apiAuthentication = api + '/sign';
 app.post(apiAuthentication + '/in', passport.authenticate('local'), authentication.signIn);
 app.post(apiAuthentication + '/out', auth.authorize('user'), authentication.signOut);
+
+
+var apiMailGun = api + '/mailgun';
+app.post(apiMailGun + '/inbox', mailgun.inbox);
 
 
 http.createServer(app).listen(app.get('port'), function(){
