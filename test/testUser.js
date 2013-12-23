@@ -55,6 +55,7 @@ describe('Users', function () {
 
   it('should return 200 adding user with valid id', function (done) {
     api(app).post('/api/v1/users').set('cookie', cookie).send({id: 'mojo@domain.com'}).expect(200, function(err, res){
+      should.exist(res.body.password);
       password = res.body.password;
       done();
     });
@@ -72,7 +73,7 @@ describe('Users', function () {
     });
   });
 
-  it('should sign out authenticate created user', function (done) {
+  it('should sign out created user', function (done) {
     api(app).post('/api/v1/sign/out').set('cookie', cookie).expect(200, done);
   });
 

@@ -17,6 +17,7 @@ var http = require('http');
 var path = require('path');
 var DB = require('./models/DB.js').DB;
 var sockets = require('./models/sockets.js');
+var messages = require('./models/messages.js');
 
 var app = express();
 var server = require('http').createServer(app);
@@ -68,10 +69,25 @@ app.post(apiAuthentication + '/out', auth.authorize('user'), authentication.sign
 
 
 var apiMailGun = api + '/mailgun';
-app.post(apiMailGun + '/inbox', message.inbox);
 app.get(apiMailGun + '/received',auth.authorize('user'), message.listReceived);
 app.get(apiMailGun + '/sent',auth.authorize('user'), message.listSent);
-app.get(apiMailGun + '/send',auth.authorize('user'), message.sendMessage);
+app.post(apiMailGun + '/send',auth.authorize('user'), message.sendMessage);
+
+
+app.post(apiMailGun + '/inbox', function(req, res){
+  messages.saveMessage(req.body, function(err, result){
+    if(err){
+      res.send(500);
+    }else{
+      sockets.get(req.body.recipient, function(err, session){
+        if(!err && session){
+          io.sockets.socket(session.socketId).emit(req.body);
+        }
+        res.send(200);
+      });
+    }
+  });
+});
 
 
 server.listen(app.get('port'), function(){

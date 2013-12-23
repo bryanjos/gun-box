@@ -6,6 +6,7 @@ var roles = require('../config.js').roles;
 var bcrypt = require('bcrypt');
 var saltLength = 8;
 var passwordLength = 8;
+var mailgun = require('../models/mailgun.js');
 
 
 exports.createAdmin = function(admin, callback){
@@ -52,7 +53,7 @@ function generateRandomPassword(length){
 }
 
 
-exports.create = function(user, callback){
+exports.create = function(user, forwardingUrl, callback){
   try{
     check(user.id, 'id is required').notNull().notEmpty();
     check(user.id, 'id must be of the form "<username>@<domain>"').contains('@');
@@ -75,7 +76,32 @@ exports.create = function(user, callback){
                     if(err){
                       callback(err, null);
                     }else{
-                      callback(null, { password: generatedPassword });
+                      if(domain.type === 'mailgun'){
+                         mailgun.createRoute(domain, user, forwardingUrl, function(data, response){
+                           if(response.statusCode === 200){
+                             user.routeId = data.route.id;
+                             DB.update(connection, DB.tables.USERS, user.id, user, function(){
+                               if(err){
+                                 DB.delete(connection, DB.tables.USERS, user.id, function(){
+                                   var error = new Error();
+                                   error.message = 'An error occured while creating the mailgun route.';
+                                   callback(error, null);
+                                 });
+                               }else{
+                                 callback(null, { password: generatedPassword });
+                               }
+                             });
+                           }else{
+                             DB.delete(connection, DB.tables.USERS, user.id, function(){
+                               var error = new Error();
+                               error.message = 'An error occured while creating the mailgun route.';
+                               callback(error, null);
+                             });
+                           }
+                         });
+                      }else{
+                        callback(null, { password: generatedPassword });
+                      }
                     }
                   });
                 }
@@ -144,7 +170,20 @@ exports.delete = function(id, cb){
     if(err){
       cb(err, null);
     }else{
-      DB.delete(connection, DB.tables.USERS, id, cb);
+      var domain = id.substr(id.indexOf('@') + 1);
+      domains.get(domain, function(err, domain){
+        if(domain.type === 'mailgun'){
+          DB.get(connection, DB.tables.USERS, id, function(err, user){
+            if(user != null){
+              mailgun.deleteRoute(domain, user.routeId, function(){
+                DB.delete(connection, DB.tables.USERS, id, cb);
+              });
+            }
+          });
+        }else{
+          DB.delete(connection, DB.tables.USERS, id, cb);
+        }
+      });
     }
   });
 };

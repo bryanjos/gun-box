@@ -11,7 +11,7 @@ exports.list = function(req, res){
 };
 
 exports.create = function(req, res){
-  users.create(req.body, function(err, result){
+  users.create(req.body, req.protocol + "://" + req.get('host') + req.url,  function(err, result){
     if(err){
       res.send(500, err);
     }else{
