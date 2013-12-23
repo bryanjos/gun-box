@@ -1,7 +1,7 @@
-var messages = require('../tasks/messages.js');
-var domains = require('../tasks/domains.js');
-var mailgun = require('../tasks/mailgun.js');
-var config = require('../config.js').config;
+var messages = require('../../../tasks/messages.js');
+var domains = require('../../../tasks/domains.js');
+var mailgun = require('../../../tasks/mailgun.js');
+var config = require('../../../config.js').config;
 var bcrypt = require('bcrypt');
 var check = require('validator').check;
 

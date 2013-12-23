@@ -1,7 +1,7 @@
-var users = require('../tasks/users.js');
+var domains = require('../../../tasks/domains.js');
 
 exports.list = function(req, res){
-  users.list(function(err, result){
+  domains.list(function(err, result){
     if(err){
       res.send(500, err);
     }else{
@@ -11,17 +11,17 @@ exports.list = function(req, res){
 };
 
 exports.create = function(req, res){
-  users.create(req.body, req.protocol + "://" + req.get('host') + req.url,  function(err, result){
+  domains.create(req.body, function(err, result){
     if(err){
       res.send(500, err);
     }else{
-      res.send(200, result);
+      res.send(200);
     }
   });
 };
 
 exports.update = function(req, res){
-  users.update(req.user.id, req.body, function(err, result){
+  domains.update(req.params.id, req.body, function(err, result){
     if(err){
       res.send(500, err);
     }else{
@@ -31,7 +31,7 @@ exports.update = function(req, res){
 };
 
 exports.delete = function(req, res){
-  users.delete(req.params.id, function(err, result){
+  domains.delete(req.params.id, function(err, result){
     if(err){
       res.send(500, err);
     }else{
