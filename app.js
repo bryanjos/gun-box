@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 
+
 var express = require('express');
 var passport = require('passport');
 var auth = require('./auth.js');
@@ -10,12 +11,16 @@ var admin = require('./routes/admin');
 var domain = require('./routes/domain');
 var user = require('./routes/user');
 var authentication = require('./routes/authentication');
-var mailgun = require('./routes/mailgun');
+var message = require('./routes/message');
 var config = require('./config.js').config;
 var http = require('http');
 var path = require('path');
+var DB = require('./models/DB.js').DB;
+var sockets = require('./models/sockets.js');
 
 var app = express();
+var server = require('http').createServer(app);
+var io = require('socket.io').listen(server);
 
 // all environments
 app.set('port', config.port || 3000);
@@ -63,16 +68,35 @@ app.post(apiAuthentication + '/out', auth.authorize('user'), authentication.sign
 
 
 var apiMailGun = api + '/mailgun';
-app.post(apiMailGun + '/inbox', mailgun.inbox);
+app.post(apiMailGun + '/inbox', message.inbox);
+app.get(apiMailGun + '/received',auth.authorize('user'), message.listReceived);
+app.get(apiMailGun + '/sent',auth.authorize('user'), message.listSent);
+app.get(apiMailGun + '/send',auth.authorize('user'), message.sendMessage);
 
 
-DB.init(function(err, res){
-  if(err){
-    console.log(err.message);
-  }
-  http.createServer(app).listen(app.get('port'), function(){
-    console.log('Express server listening on port ' + app.get('port'));
+server.listen(app.get('port'), function(){
+  console.log('Express server listening on port ' + app.get('port'));
+
+  DB.init(function(err, res){
+    if(err){
+      console.log(err.message);
+    }
+  });
+
+  io.sockets.on('connection', function (socket) {
+    socket.on('ready', function (data) {
+      //save socketId so that we can send data to the user
+      sockets.create({id: data.id, socketId: socket.id}, function(){
+
+      });
+    });
   });
 });
 
+
+
+
+
+
 exports.app = app;
+exports.io = io;
