@@ -1,5 +1,5 @@
 var should = require('should');
-var DB = require('../models/DB.js').DB;
+var DB = require('../tasks/DB.js').DB;
 
 describe('DB', function(){
 

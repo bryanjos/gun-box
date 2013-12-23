@@ -15,9 +15,9 @@ var message = require('./routes/message');
 var config = require('./config.js').config;
 var http = require('http');
 var path = require('path');
-var DB = require('./models/DB.js').DB;
-var sockets = require('./models/sockets.js');
-var messages = require('./models/messages.js');
+var DB = require('./tasks/DB.js').DB;
+var sockets = require('./tasks/sockets.js');
+var messages = require('./tasks/messages.js');
 
 var app = express();
 var server = require('http').createServer(app);

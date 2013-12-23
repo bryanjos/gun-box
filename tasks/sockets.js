@@ -1,4 +1,4 @@
-var DB = require('../models/DB.js').DB;
+var DB = require('./DB.js').DB;
 
 
 exports.get = function(id, cb){

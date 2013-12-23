@@ -1,4 +1,4 @@
-var domains = require('../models/domains.js');
+var domains = require('../tasks/domains.js');
 
 exports.list = function(req, res){
   domains.list(function(err, result){

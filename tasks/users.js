@@ -1,12 +1,12 @@
 var check = require('validator').check;
-var DB = require('../models/DB.js').DB;
-var domains = require('../models/domains.js');
+var DB = require('./DB.js').DB;
+var domains = require('./domains.js');
 var config = require('../config.js').config;
 var roles = require('../config.js').roles;
 var bcrypt = require('bcrypt');
 var saltLength = 8;
 var passwordLength = 8;
-var mailgun = require('../models/mailgun.js');
+var mailgun = require('./mailgun.js');
 
 
 exports.createAdmin = function(admin, callback){

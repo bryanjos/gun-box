@@ -1,7 +1,7 @@
 var should = require('should');
 var api = require('supertest');
 var app = require('../app.js').app;
-var DB = require('../models/DB.js').DB;
+var DB = require('../tasks/DB.js').DB;
 
 
 describe('Admin', function () {

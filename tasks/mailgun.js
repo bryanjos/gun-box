@@ -1,6 +1,6 @@
 var rest = require('restler');
 var check = require('validator').check;
-var messages = require('../models/messages.js');
+var messages = require('./messages.js');
 var mailgunApi = 'https://api.mailgun.net/v2';
 
 

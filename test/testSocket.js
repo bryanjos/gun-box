@@ -1,8 +1,8 @@
 var should = require('should');
 var api = require('supertest');
 var app = require('../app.js').app;
-var DB = require('../models/DB.js').DB;
-var sockets = require('../models/sockets.js');
+var DB = require('../tasks/DB.js').DB;
+var sockets = require('../tasks/sockets.js');
 
 
 describe('Sockets', function () {

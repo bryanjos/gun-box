@@ -1,4 +1,4 @@
-var users = require('../models/users.js');
+var users = require('../tasks/users.js');
 
 exports.list = function(req, res){
   users.list(function(err, result){

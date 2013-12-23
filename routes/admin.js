@@ -1,4 +1,4 @@
-var users = require('../models/users.js');
+var users = require('../tasks/users.js');
 
 exports.init = function(req, res){
   users.createAdmin(req.body, function(err, result){

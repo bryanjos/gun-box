@@ -2,8 +2,8 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var underscore = require('underscore')._;
 var bcrypt = require('bcrypt');
-var DB = require('./models/DB.js').DB;
-var users = require('./models/users.js');
+var DB = require('./tasks/DB.js').DB;
+var users = require('./tasks/users.js');
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
