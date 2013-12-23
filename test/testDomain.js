@@ -8,7 +8,7 @@ describe('Domains', function () {
   var cookie;
 
   before (function (done) {
-    DB.init(function(err, results){
+    DB.clear(function(err, results){
       api(app).post('/api/v1/admin/init').send({password: 'gellatin'}).expect(200, function(err, res){
         api(app).post('/api/v1/sign/in').send({username: 'admin', password: 'gellatin'}).expect(200, function(err, res){
           cookie = res.headers['set-cookie'];
@@ -19,7 +19,7 @@ describe('Domains', function () {
   });
 
   after(function (done) {
-    DB.destroy(function(err, results){
+    DB.clear(function(err, results){
       done();
     });
   });

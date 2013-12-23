@@ -5,7 +5,9 @@ var config = require('../config.js').config;
 exports.DB = {
   tables: {
     DOMAINS: 'domains',
-    USERS: 'users'
+    USERS: 'users',
+    MESSAGES: 'messages',
+    SOCKETS: 'sockets'
   },
 
   init: function (callback) {
@@ -16,7 +18,13 @@ exports.DB = {
         r.dbCreate(config.rethinkdb.db).run(connection, function (err, results) {
           r.tableCreate(exports.DB.tables.USERS).run(connection, function (err, results) {
             r.tableCreate(exports.DB.tables.DOMAINS).run(connection, function(err, results){
-              callback(null, {created: 1});
+              r.tableCreate(exports.DB.tables.MESSAGES).run(connection, function(err, results){
+                r.tableCreate(exports.DB.tables.SOCKETS).run(connection, function(err, results){
+                  r.table(exports.DB.tables.SOCKETS).delete().run(connection, function(err, results){
+                    callback(null, {created: 1});
+                  });
+                });
+              });
             });
           });
         });
@@ -31,8 +39,31 @@ exports.DB = {
       } else {
         r.tableDrop(exports.DB.tables.USERS).run(connection, function (err, results) {
           r.tableDrop(exports.DB.tables.DOMAINS).run(connection, function (err, results) {
-            r.dbDrop(config.rethinkdb.db).run(connection, function(err, results){
-              callback(null, {dropped: 1});
+            r.tableDrop(exports.DB.tables.MESSAGES).run(connection, function (err, results) {
+              r.tableDrop(exports.DB.tables.SOCKETS).run(connection, function (err, results) {
+                r.dbDrop(config.rethinkdb.db).run(connection, function(err, results){
+                  callback(null, {dropped: 1});
+                });
+              });
+            });
+          });
+        });
+      }
+    });
+  },
+
+
+  clear: function (callback) {
+    r.connect(config.rethinkdb, function (err, connection) {
+      if (err) {
+        callback(err, null);
+      } else {
+        r.table(exports.DB.tables.USERS).delete().run(connection, function (err, results) {
+          r.table(exports.DB.tables.DOMAINS).delete().run(connection, function (err, results) {
+            r.table(exports.DB.tables.MESSAGES).delete().run(connection, function (err, results) {
+              r.table(exports.DB.tables.SOCKETS).delete().run(connection, function (err, results) {
+                  callback(null, {deleted: 1});
+              });
             });
           });
         });

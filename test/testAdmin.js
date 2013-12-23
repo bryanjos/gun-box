@@ -10,13 +10,13 @@ describe('Admin', function () {
 
 
   before (function (done) {
-    DB.init(function(err, results){
+    DB.clear(function(err, results){
       done();
     });
   });
 
   after(function (done) {
-    DB.destroy(function(err, results){
+    DB.clear(function(err, results){
       done();
     });
   });

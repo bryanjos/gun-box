@@ -12,6 +12,19 @@ exports.get = function(id, cb){
   });
 };
 
+
+exports.getByUserId = function(userId, cb){
+  var domain = userId.substr(userId.indexOf('@') + 1);
+
+  DB.connect(function(err, connection){
+    if(err){
+      cb(err, null);
+    }else{
+      DB.get(connection, DB.tables.DOMAINS, domain, cb);
+    }
+  });
+};
+
 exports.list = function(cb){
   DB.connect(function(err, connection){
     if(err){

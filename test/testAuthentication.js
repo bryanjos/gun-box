@@ -8,16 +8,15 @@ describe('Authentication', function () {
   var cookie;
 
   before (function (done) {
-    DB.init(function(err, results){
+    DB.clear(function(err, results){
       api(app).post('/api/v1/admin/init').send({password: 'gellatin'}).expect(200, function(err, result){
         done();
       });
-
     });
   });
 
   after(function (done) {
-    DB.destroy(function(err, results){
+    DB.clear(function(err, results){
       done();
     });
   });
